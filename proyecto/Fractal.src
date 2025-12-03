@@ -1,0 +1,134 @@
+
+var int niveles = 8;           
+var int lock_up = 0;           
+var int lock_down = 0;        
+var int actualizar = 1;        
+
+// Limites
+var int max_niveles = 32;      
+var int min_niveles = 1;       
+
+
+while (1 == 1) {
+
+    
+    var int key_up = read(1);     
+    var int key_down = read(2);  
+    
+    
+    if (key_up == 1) {
+        if (lock_up == 0) {
+            niveles = niveles + 1;
+            if (niveles > max_niveles) {
+                niveles = max_niveles;
+            }
+            actualizar = 1;
+            lock_up = 1;
+        }
+    }
+    if (key_up == 0) {
+        lock_up = 0;
+    }
+    
+    if (key_down == 1) {
+        if (lock_down == 0) {
+            niveles = niveles - 1;
+            if (niveles < min_niveles) {
+                niveles = min_niveles;
+            }
+            actualizar = 1;
+            lock_down = 1;
+        }
+    }
+    if (key_down == 0) {
+        lock_down = 0;
+    }
+
+  
+    if (actualizar == 1) {
+        
+        // Limpiar pantalla
+        for (var int y = 0; y < 64; y = y + 1) {
+            for (var int x = 0; x < 64; x = x + 1) {
+                draw(x, y, 0);
+            }
+        }
+        
+        print("Dibujando fractal con niveles:");
+        print(niveles);
+        
+       
+        
+        var int base_y = 2;   
+        var int escala = 2;   
+        
+        var int offset_x = 32;
+        
+        for (var int fila = 0; fila < niveles; fila = fila + 1) {
+            
+            var int y_pos = base_y + fila * escala;
+            
+            if (y_pos < 64) {
+                
+
+                var int inicio_x = offset_x - fila;
+                
+                for (var int col = 0; col <= fila; col = col + 1) {
+                    
+                    var int x_pos = inicio_x + col * escala;
+                    
+                    if (x_pos >= 0) {
+                        if (x_pos < 64) {
+                            
+                           
+                            
+                            var int es_impar = 1;
+                            var int temp_n = fila;
+                            var int temp_k = col;
+                            
+                            for (var int bit = 0; bit < 6; bit = bit + 1) {
+                                var int mask = 1;
+                                for (var int b = 0; b < bit; b = b + 1) {
+                                    mask = mask * 2;
+                                }
+                                
+                                var int bit_k = temp_k / mask;
+                                bit_k = bit_k % 2;
+                                
+                                var int bit_n = temp_n / mask;
+                                bit_n = bit_n % 2;
+                                
+                                if (bit_k == 1) {
+                                    if (bit_n == 0) {
+                                        es_impar = 0;
+                                    }
+                                }
+                            }
+                            
+                            if (es_impar == 1) {
+                                for (var int dy = 0; dy < escala; dy = dy + 1) {
+                                    for (var int dx = 0; dx < escala; dx = dx + 1) {
+                                        var int px = x_pos + dx;
+                                        var int py = y_pos + dy;
+                                        if (px >= 0) {
+                                            if (px < 64) {
+                                                if (py >= 0) {
+                                                    if (py < 64) {
+                                                        draw(px, py, 1);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        actualizar = 0;
+        print("Fractal actualizado");
+    }
+}
